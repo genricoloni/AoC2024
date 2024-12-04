@@ -15,47 +15,41 @@ pub fn part_one(input: &str) -> Option<u32> {
         let num1: i32 = captures[1].parse().unwrap();
         let num2: i32 = captures[2].parse().unwrap();
 
-        println!("Trovati {} * {} = {}", num1, num2, num1 * num2);
         res += num1 * num2;
     }
-
-    println!("Alla fine: {}", res);
 
     Some(res as u32)
 }
 
-
 pub fn part_two(input: &str) -> Option<u32> {
     // Le regex per i vari pattern
     let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)").unwrap();
-        let mut res = 0;
+    let mut res = 0;
 
-        let mut enable = 1;
+    let mut enable = true;
 
-        for cap in re.find_iter(input) {
-            // Otteniamo le catture
-            println!("Tovato:{:?}", cap.as_str());
+    for cap in re.find_iter(input) {
+        // Otteniamo le catture
 
-            match &cap.as_str()[..4] {
-                "mul(" => {
-                    if enable == 0 {
-                        continue;
-                    }
-                    let captures = re.captures(cap.as_str()).unwrap();
-                    let num1: i32 = captures[1].parse().unwrap();
-                    let num2: i32 = captures[2].parse().unwrap();
-                    res += num1 * num2;
-                },
-                "do()" => {
-                    enable = 1;
-                },
-                "don'" => {
-                    enable = 0;
-                },
-                _ => {}
+        match &cap.as_str()[..3] {
+            "mul" => {
+                if enable {
+                    continue;
+                }
+                let captures = re.captures(cap.as_str()).unwrap();
+                let num1: i32 = captures[1].parse().unwrap();
+                let num2: i32 = captures[2].parse().unwrap();
+                res += num1 * num2;
             }
+            "do(" => {
+                enable = true;
+            }
+            "don" => {
+                enable = false;
+            }
+            _ => {}
         }
-
+    }
 
     Some(res as u32)
 }
