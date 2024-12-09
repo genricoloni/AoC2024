@@ -38,7 +38,6 @@ pub fn part_one(input: &str) -> Option<u32> {
 
         dir_index = (dir_index + 1) % dirs.len();
     }
-    None
 }
 
 
