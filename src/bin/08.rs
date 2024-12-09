@@ -53,10 +53,62 @@ pub fn part_one(input: &str) -> Option<u32> {
     // Return the count of unique antinode positions
     Some(antinode_positions.len() as u32)
 }
-
+use std::collections::HashMap;
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut field: Vec<String> = Vec::new();
+    let mut antennas: HashMap<char, Vec<(usize, usize)>> = HashMap::new();
+
+    // Leggi la griglia e raccogli le posizioni delle antenne
+    for (y, line) in input.lines().enumerate() {
+        field.push(line.to_string());
+
+        for (x, cell) in line.chars().enumerate() {
+            if cell != '.' {
+                antennas.entry(cell)
+                    .or_insert_with(Vec::new)
+                    .push((x, y));
+            }
+        }
+    }
+
+    let rows = field.len();
+    let cols = field[0].len();
+    let mut part1 = HashSet::new();
+    let mut part2 = HashSet::new();
+
+    // Calcola gli antinodi per ogni frequenza
+    for (_, ants) in antennas.iter() {
+        for (x1, y1) in ants.iter() {
+            for (x2, y2) in ants.iter() {
+                if *x1 == *x2 && *y1 == *y2 {
+                    continue;
+                }
+
+                let dx = *x1 as isize - *x2 as isize;
+                let dy = *y1 as isize - *y2 as isize;
+
+                // Aggiungi gli antinodi per ogni antenna a distanza 2
+                for mult in 1..=std::cmp::max(rows, cols) {
+                    let nx = (*x2 as isize + mult as isize * dx) as usize;
+                    let ny = (*y2 as isize + mult as isize * dy) as usize;
+
+                    // Verifica se la posizione è valida nel campo
+                    if nx >= cols || ny >= rows {
+                        break;
+                    }
+
+                    if mult == 2 {
+                        part1.insert((nx, ny));
+                    }
+                    part2.insert((nx, ny));
+                }
+            }
+        }
+    }
+
+    // Ritorna il numero di antinodi unici per la parte 2
+    Some(part2.len() as u32)
 }
 
 #[cfg(test)]
@@ -72,6 +124,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(34));
     }
 }
