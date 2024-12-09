@@ -112,8 +112,8 @@ fn concatenate(accumulator: i64, next: i64) -> i64 {
     let accumulator_str = accumulator.to_string();
     let next_str = next.to_string();
     let concatenated = accumulator_str + &next_str;
-    concatenated.parse().unwrap();
-    kk
+    concatenated.parse().unwrap()
+
 }
 
 
